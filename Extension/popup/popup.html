@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,13 +15,13 @@
             </div>
             <div class="status-indicator" id="statusIndicator">
                 <span class="status-dot" id="statusDot"></span>
-                <span id="statusText">Ready</span>
+                <span id="statusText">準備完了</span>
             </div>
         </header>
 
         <main>
             <div class="script-section">
-                <h3>Available Scripts</h3>
+                <h3>利用可能なスクリプト</h3>
                 <div class="scripts-list" id="scriptsList">
                     <!-- Scripts will be populated here -->
                 </div>
@@ -29,32 +29,32 @@
 
             <div class="account-section">
                 <div class="section-header">
-                    <h4>Account Manager</h4>
+                    <h4>アカウント管理</h4>
                 </div>
                 <div class="header-actions">
-                    <button class="btn btn-primary btn-small" id="refreshAccountBtn" title="Add Current Account">
+                    <button class="btn btn-primary btn-small" id="refreshAccountBtn" title="現在のアカウントを追加">
                         <span class="icon">🔄</span>
-                        Refresh
+                        更新
                     </button>
-                    <button class="btn btn-primary btn-small" id="addAccountBtn" title="Add Account Manually">
+                    <button class="btn btn-primary btn-small" id="addAccountBtn" title="アカウントを手動で追加">
                         <span class="icon">➕</span>
-                        Add
+                        追加
                     </button>
-                    <button class="btn btn-secondary btn-small" id="exportAccountsBtn" title="Export All Accounts">
+                    <button class="btn btn-secondary btn-small" id="exportAccountsBtn" title="すべてのアカウントをエクスポート">
                         <span class="icon">📤</span>
-                        Export
+                        エクスポート
                     </button>
-                    <button class="btn btn-secondary btn-small" id="importAccountsBtn" title="Import Accounts">
+                    <button class="btn btn-secondary btn-small" id="importAccountsBtn" title="アカウントをインポート">
                         <span class="icon">📥</span>
-                        Import
+                        インポート
                     </button>
                 </div>
                 
                 <div class="accounts-container" id="accountsContainer">
                     <div class="account-placeholder" id="accountPlaceholder">
                         <span class="placeholder-icon">👤</span>
-                        <span class="placeholder-text">No accounts saved</span>
-                        <span class="placeholder-subtext">Click "Refresh" to add current account</span>
+                        <span class="placeholder-text">保存されたアカウントはありません</span>
+                        <span class="placeholder-subtext">現在のアカウントを追加するには「更新」をクリックしてください</span>
                     </div>
                 </div>
             </div>
@@ -63,27 +63,27 @@
             <div class="modal-overlay" id="addAccountModal" style="display: none;">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4>Add Account Manually</h4>
+                        <h4>アカウントを手動で追加</h4>
                         <button class="modal-close" id="closeModalBtn">✕</button>
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
-                            <label for="accountName">Account Name</label>
-                            <input type="text" id="accountName" placeholder="Enter account name" maxlength="50">
+                            <label for="accountName">アカウント名</label>
+                            <input type="text" id="accountName" placeholder="アカウント名を入力" maxlength="50">
                         </div>
                         <div class="form-group">
-                            <label for="accountToken">Token (Cookie Value)</label>
-                            <textarea id="accountToken" placeholder="Paste authentication token here" rows="3"></textarea>
+                            <label for="accountToken">トークン（Cookie の値）</label>
+                            <textarea id="accountToken" placeholder="認証トークンをここに貼り付け" rows="3"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-primary" id="saveAccountBtn">
                             <span class="icon">💾</span>
-                            Save Account
+                            アカウントを保存
                         </button>
                         <button class="btn btn-secondary" id="cancelAccountBtn">
                             <span class="icon">✕</span>
-                            Cancel
+                            キャンセル
                         </button>
                     </div>
                 </div>
@@ -93,19 +93,19 @@
             <div class="modal-overlay" id="settingsModal" style="display: none;">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4>Settings</h4>
+                        <h4>設定</h4>
                         <button class="modal-close" id="closeSettingsBtn">✕</button>
                     </div>
                     <div class="settings-section">
-                        <h3>Startup Script</h3>
-                        <p style="font-size: 8px; color: #888; margin-bottom: 10px;">Select a script to run automatically when visiting wplace.live</p>
+                        <h3>起動時に実行するスクリプト</h3>
+                        <p style="font-size: 8px; color: #888; margin-bottom: 10px;">wplace.live を開いたときに自動で実行するスクリプトを選択してください</p>
                         <select id="startupScriptSelect" class="settings-select">
-                            <option value="">None</option>
+                            <option value="">なし</option>
                             <!-- Scripts will be populated here -->
                         </select>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" id="closeSettingsModalBtn">Close</button>
+                        <button class="btn btn-secondary" id="closeSettingsModalBtn">閉じる</button>
                     </div>
                 </div>
             </div>
@@ -114,7 +114,7 @@
         <footer>
             <div class="footer-info">
                 <span>v2.0.7</span>
-                <a href="#" id="settingsBtn">Settings</a>
+                <a href="#" id="settingsBtn">設定</a>
             </div>
         </footer>
     </div>
@@ -122,4 +122,3 @@
     <script src="popup.js"></script>
 </body>
 </html>
-
