@@ -2,43 +2,43 @@
 // @name         WPlace AutoBOT Script Manager
 // @namespace    http://tampermonkey.net/
 // @version      2025-09-08.1
-// @description  Script manager and launcher for WPlace AutoBOT
+// @description  スクリプトマネージャとランチャー（WPlace AutoBOT）
 // @author       TH3C0D3R
 // @match        https://wplace.live/*
 // @grant        none
 // @icon
-// ==/UserScript==l
+// ==/UserScript==
 
 ; (async () => {
-  console.log('%c🚀 WPlace AutoBOT Script Manager Loading...', 'color: #00ff41; font-weight: bold; font-size: 16px;');
+  console.log('%c🚀 WPlace AutoBOT スクリプトマネージャを読み込んでいます...', 'color: #00ff41; font-weight: bold; font-size: 16px;');
 
   // Available scripts configuration
   const AVAILABLE_SCRIPTS = [
     { 
       name: 'Auto-Farm.js', 
-      displayName: '🌾 Auto Farm', 
-      description: 'Automated farming and pixel painting',
+      displayName: '🌾 自動ファーミング', 
+      description: '自動ファーミングとピクセルペイント',
       icon: '🌾',
       category: 'automation'
     },
     { 
       name: 'Auto-Image.js', 
-      displayName: '🖼️ Auto Image', 
-      description: 'Automated image processing and placement',
+      displayName: '🖼️ 画像自動配置', 
+      description: '画像処理と自動配置（アカウント切替対応）',
       icon: '🖼️',
       category: 'automation'
     },
     {
       name: 'Auto-Repair.js',
-      displayName: '🔧 Auto Repair',
-      description: 'Automated repair and maintenance tasks',
+      displayName: '🔧 自動修復',
+      description: '自動修復・メンテナンス作業',
       icon: '🔧',
       category: 'utility'
     },
     {
       name: 'Art-Extractor.js',
-      displayName: '🎨 Art Extractor',
-      description: 'Extract artwork areas to JSON for auto-repair',
+      displayName: '🎨 アート抽出',
+      description: 'キャンバスからアート領域を抽出して JSON として保存',
       icon: '🎨',
       category: 'utility'
     }
@@ -418,15 +418,15 @@
 
   // Execute script function - Fixed to work like extension popup
   async function executeScript(scriptName) {
-    console.group(`%c🚀 Executing ${scriptName}`, 'color: #00ff41; font-weight: bold;');
+    console.group(`%c🚀 ${scriptName} を実行しています`, 'color: #00ff41; font-weight: bold;');
     
     try {
       // Show loading in the UI
-      showLoading(`Launching ${scriptName}...`);
+      showLoading(`起動中: ${scriptName}...`);
       
       // The Script Manager runs in MAIN world context and doesn't have direct Chrome API access
       // Instead, we need to communicate back to the content script which can use Chrome APIs
-      console.log('%c🔄 Script Manager context - delegating to content script', 'color: #ff6b35;');
+      console.log('%c🔄 Script Manager コンテキスト - content script に処理を委譲します', 'color: #ff6b35;');
       
       // Create a custom event to communicate with the content script
       const executeEvent = new CustomEvent('autobot-execute-script', {
@@ -437,8 +437,8 @@
       window.dispatchEvent(executeEvent);
       
       // Show success immediately since we're delegating
-      console.log(`%c✅ ${scriptName} execution delegated to content script`, 'color: #39ff14; font-weight: bold;');
-      showSuccess(`${scriptName} execution started!`);
+      console.log(`%c✅ ${scriptName} の実行を content script に委譲しました`, 'color: #39ff14; font-weight: bold;');
+      showSuccess(`${scriptName} を起動しました`);
       
       // Auto-close after success
       setTimeout(() => {
@@ -446,8 +446,8 @@
       }, 1500);
       
     } catch (error) {
-      console.error(`%c❌ Failed to execute ${scriptName}:`, 'color: #ff073a; font-weight: bold;', error);
-      showError(`Failed to launch ${scriptName}: ${error.message}`);
+      console.error(`%c❌ ${scriptName} の実行に失敗しました:`, 'color: #ff073a; font-weight: bold;', error);
+      showError(`${scriptName} の起動に失敗しました: ${error.message}`);
     } finally {
       console.groupEnd();
     }
@@ -533,7 +533,7 @@
     // Remove ESC key listener
     document.removeEventListener('keydown', handleEscKey);
     
-    console.log('%c👋 Script Manager closed', 'color: #ff6b35;');
+    console.log('%c👋 スクリプトマネージャを閉じました', 'color: #ff6b35;');
   }
 
   // ESC key handler
@@ -552,17 +552,17 @@
     const existingBackdrop = document.getElementById('script-manager-backdrop');
     if (existingBackdrop) existingBackdrop.remove();
     
-    console.log('%c🎮 Opening Script Manager with Neon Theme', 'color: #00ff41; font-weight: bold;');
+    console.log('%c🎮 スクリプトマネージャ（ネオンテーマ）を開きます', 'color: #00ff41; font-weight: bold;');
     
     // Get icon URL for display
     let iconUrl = '';
     try {
       if (chrome && chrome.runtime && chrome.runtime.getURL) {
         iconUrl = chrome.runtime.getURL('icons/icon32.png');
-        console.log('📷 Icon URL:', iconUrl);
+        console.log('📷 アイコン URL:', iconUrl);
       }
     } catch (e) {
-      console.log('Extension context not available for icon');
+      console.log('拡張機能コンテキストが利用できず、アイコン取得をスキップします');
     }
     
     // Inject styles
@@ -588,7 +588,7 @@
       <div class="script-manager-header">
         <div class="header-content">
           ${iconUrl ? `<img src="${iconUrl}" alt="AutoBOT" class="header-icon" onerror="this.style.display='none'">` : ''}
-          <h2 class="script-manager-title">⚡ WPlace AutoBOT Script Manager ⚡</h2>
+          <h2 class="script-manager-title">⚡ WPlace AutoBOT スクリプトマネージャ ⚡</h2>
         </div>
         <button class="script-manager-close" onclick="closeScriptManager()">×</button>
       </div>
@@ -596,10 +596,10 @@
         <!-- Scripts will be rendered here -->
       </div>
       <div class="script-manager-footer">
-        <div class="status-text">Ready to launch scripts</div>
+        <div class="status-text">スクリプトを起動できます</div>
         <div class="action-buttons">
-          <button class="neon-btn secondary" onclick="closeScriptManager()">Cancel</button>
-          <button class="neon-btn" onclick="window.location.reload()">Refresh Page</button>
+          <button class="neon-btn secondary" onclick="closeScriptManager()">キャンセル</button>
+          <button class="neon-btn" onclick="window.location.reload()">ページを更新</button>
         </div>
       </div>
     `;
@@ -609,7 +609,7 @@
     document.body.appendChild(container);
     
     // Debug: Check positioning
-    console.log('%c🔍 Script Manager Positioning Debug:', 'color: #ff6b35; font-weight: bold;');
+    console.log('%c🔍 スクリプトマネージャの位置情報を確認:', 'color: #ff6b35; font-weight: bold;');
     console.log(`  - Container position: ${getComputedStyle(container).position}`);
     console.log(`  - Container top: ${getComputedStyle(container).top}`);
     console.log(`  - Container left: ${getComputedStyle(container).left}`);
@@ -626,7 +626,7 @@
     // Focus container for accessibility
     container.focus();
     
-    console.log('%c✅ Script Manager opened successfully', 'color: #39ff14; font-weight: bold;');
+    console.log('%c✅ スクリプトマネージャを正常に開きました', 'color: #39ff14; font-weight: bold;');
   }
 
   // Make functions globally available
@@ -635,8 +635,8 @@
   window.showScriptManager = showScriptManager;
 
   // Auto-start the script manager
-  console.log('%c🎯 Auto-launching Script Manager...', 'color: #00ff41; font-weight: bold;');
+  console.log('%c🎯 スクリプトマネージャを自動起動します...', 'color: #00ff41; font-weight: bold;');
   showScriptManager();
 
-  console.log('%c🚀 WPlace AutoBOT Script Manager Ready!', 'color: #39ff14; font-weight: bold; font-size: 16px;');
+  console.log('%c🚀 WPlace AutoBOT スクリプトマネージャ 準備完了!', 'color: #39ff14; font-weight: bold; font-size: 16px;');
 })();
