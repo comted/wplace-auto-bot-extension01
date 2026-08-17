@@ -1,24 +1,24 @@
-// Content script for WPlace AutoBOT - Creates in-page UI
+// WPlace AutoBOT のコンテンツスクリプト - ページ内 UI を作成します
 
-// Check if we're on wplace.lives
+// wplace.live 上でのみ動作させる
 if (window.location.hostname === 'wplace.live') {
 
-    // Control variables
+    // 制御変数
     let autobotButton = null;
     let buttonRemoved = false;
     let buttonHiddenByModal = false;
     let currentScript = null;
 
-    // Available scripts configuration - default script to execute
-    const DEFAULT_SCRIPT = 'Script-manager.js'; // Script manager launcher
+    // 利用可能なスクリプト設定 - デフォルトで実行するスクリプト
+    const DEFAULT_SCRIPT = 'Script-manager.js'; // スクリプトマネージャ ランチャー
 
-    // Check if any modal is open
+    // モーダルが開いているか確認
     function isAnyModalOpen() {
         const modals = document.querySelectorAll('dialog.modal[open], dialog[open]');
         return modals.length > 0;
     }
 
-    // Handle button visibility based on modals
+    // モーダルに応じてボタンの表示/非表示を制御
     function handleButtonVisibility() {
         if (!autobotButton || buttonRemoved) return;
 
@@ -41,7 +41,7 @@ if (window.location.hostname === 'wplace.live') {
         }
     }
 
-    // Remove button with animation
+    // アニメーション付きでボタンを削除
     function removeButtonWithAnimation() {
         buttonRemoved = true;
 
@@ -59,12 +59,12 @@ if (window.location.hostname === 'wplace.live') {
         }
     }
 
-    // Execute script functions
+    // スクリプト実行処理
     async function executeScript(scriptName) {
         if (!autobotButton || currentScript) return;
 
         try {
-            // Change button appearance to loading
+            // ボタンを読み込み中表示に変更
             autobotButton.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 animate-spin">
                     <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z"/>
@@ -74,14 +74,14 @@ if (window.location.hostname === 'wplace.live') {
             autobotButton.disabled = true;
             currentScript = scriptName;
 
-            // Send message to background script
+            // background にスクリプト実行を依頼
             const response = await chrome.runtime.sendMessage({
                 action: 'executeScript',
                 scriptName: scriptName
             });
 
             if (response && response.success) {
-                // Show success
+                // 成功表示
                 autobotButton.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
                         <path d="M9,20.42L2.79,14.21L5.62,11.38L9,14.77L18.88,4.88L21.71,7.71L9,20.42Z"/>
@@ -89,9 +89,9 @@ if (window.location.hostname === 'wplace.live') {
                 `;
                 autobotButton.style.background = '#4CAF50';
                 autobotButton.disabled = false;
-                autobotButton.title = `${scriptName} executed successfully`;
+                autobotButton.title = `${scriptName} を正常に実行しました`;
 
-                // Reset button after 2 seconds instead of removing it
+                // 2秒後にリセット（削除しない）
                 setTimeout(() => {
                     resetButton();
                 }, 2000);
@@ -100,10 +100,10 @@ if (window.location.hostname === 'wplace.live') {
             }
 
         } catch (error) {
-            console.error('Error executing script:', error);
+            console.error('スクリプト実行エラー:', error);
             currentScript = null;
 
-            // Show error feedback
+            // エラー表示
             if (autobotButton) {
                 autobotButton.innerHTML = `
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
@@ -112,7 +112,7 @@ if (window.location.hostname === 'wplace.live') {
                 `;
                 autobotButton.style.opacity = '1';
                 autobotButton.style.background = '#f44336';
-                autobotButton.title = `Error: ${error.message} - Click to retry`;
+                autobotButton.title = `エラー: ${error.message} - クリックで再試行`;
 
                 setTimeout(() => {
                     resetButton();
@@ -121,12 +121,12 @@ if (window.location.hostname === 'wplace.live') {
         }
     }
 
-    // Listen for script execution events from Script Manager
+    // Script Manager からの実行要求を受け取る
     window.addEventListener('autobot-execute-script', async (event) => {
         const { scriptName } = event.detail;
-        console.log(`%c📡 Content script received execution request for: ${scriptName}`, 'color: #00ff41; font-weight: bold;');
+        console.log(`%c📡 Script Manager から実行要求を受信しました: ${scriptName}`, 'color: #00ff41; font-weight: bold;');
 
-        // Execute the script using the content script's Chrome API access
+        // content script の Chrome API を使って実行
         try {
             const response = await chrome.runtime.sendMessage({
                 action: 'executeScript',
@@ -134,33 +134,33 @@ if (window.location.hostname === 'wplace.live') {
             });
 
             if (response && response.success) {
-                console.log(`%c✅ ${scriptName} executed successfully via content script`, 'color: #39ff14; font-weight: bold;');
+                console.log(`%c✅ ${scriptName} を content script 経由で正常に実行しました`, 'color: #39ff14; font-weight: bold;');
             } else {
-                console.error(`%c❌ Script execution failed:`, 'color: #ff073a; font-weight: bold;', response?.error);
+                console.error(`%c❌ スクリプト実行に失敗しました:`, 'color: #ff073a; font-weight: bold;', response?.error);
             }
         } catch (error) {
-            console.error(`%c❌ Script execution error:`, 'color: #ff073a; font-weight: bold;', error);
+            console.error(`%c❌ スクリプト実行中にエラーが発生しました:`, 'color: #ff073a; font-weight: bold;', error);
         }
     });
 
-    // Reset button to initial state
+    // ボタンを初期状態に戻す
     function resetButton() {
         if (autobotButton) {
             autobotButton.innerHTML = `
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
-                    <path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7H14A7,7 0 0,1 21,14H22A1,1 0 0,1 23,15V18A1,1 0 0,1 22,19H21V20A2,2 0 0,1 19,22H5A2,2 0 0,1 3,20V19H2A1,1 0 0,1 1,18V15A1,1 0 0,1 2,14H3A7,7 0 0,1 10,7H11V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12A2,2 0 0,1 6,10M18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12A2,2 0 0,1 18,10M8,17.5H16V16H8V17.5Z"/>
+                    <path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7H14A7,7 0 0,1 21,14H22A1,1 0 0,1 23,15V18A1,1 0 0,1 22,19H21V20A2,2 0 0,1 19,22H5A2,2 0 0,1 3,20V19H2A1,1 0 0,1 1,18V1[...]"/>
                 </svg>
             `;
             autobotButton.style.background = '';
-            autobotButton.title = `AutoBot - Click to run ${DEFAULT_SCRIPT}`;
+            autobotButton.title = `AutoBot - クリックで ${DEFAULT_SCRIPT} を実行`;
             autobotButton.disabled = false;
             currentScript = null;
         }
     }
 
-    // Script menu functionality removed - button now directly executes the default script
+    // スクリプトメニュー機能は削除 - ボタンはデフォルトスクリプトを直接実行します
 
-    // Create the AutoBot button
+    // AutoBot ボタンを作成
     function createAutoButton() {
         if (buttonRemoved) return;
 
@@ -178,10 +178,10 @@ if (window.location.hostname === 'wplace.live') {
         autobotButton = document.createElement('button');
         autobotButton.id = 'wplace-autobot-btn';
         autobotButton.className = 'btn btn-square shadow-md';
-        autobotButton.title = `AutoBot - Click to run ${DEFAULT_SCRIPT}`;
+        autobotButton.title = `AutoBot - クリックで ${DEFAULT_SCRIPT} を実行`;
         autobotButton.innerHTML = `
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
-                <path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7H14A7,7 0 0,1 21,14H22A1,1 0 0,1 23,15V18A1,1 0 0,1 22,19H21V20A2,2 0 0,1 19,22H5A2,2 0 0,1 3,20V19H2A1,1 0 0,1 1,18V15A1,1 0 0,1 2,14H3A7,7 0 0,1 10,7H11V5.73C10.4,5.39 10,4.74 10,4A2,2 0 0,1 12,2M6,10A2,2 0 0,1 8,12A2,2 0 0,1 6,14A2,2 0 0,1 4,12A2,2 0 0,1 6,10M18,10A2,2 0 0,1 20,12A2,2 0 0,1 18,14A2,2 0 0,1 16,12A2,2 0 0,1 18,10M8,17.5H16V16H8V17.5Z"/>
+                <path d="M12,2A2,2 0 0,1 14,4C14,4.74 13.6,5.39 13,5.73V7H14A7,7 0 0,1 21,14H22A1,1 0 0,1 23,15V18A1,1 0 0,1 22,19H21V20A2,2 0 0,1 19,22H5A2,2 0 0,1 3,20V19H2A1,1 0 0,1 1,18V15A1,[...]"/>
             </svg>
         `;
 
@@ -189,20 +189,20 @@ if (window.location.hostname === 'wplace.live') {
             transition: all 0.2s ease;
         `;
 
-        // Direct execution instead of showing menu
+        // メニューではなく直接実行
         autobotButton.addEventListener('click', () => {
             executeScript(DEFAULT_SCRIPT);
         });
 
-        // Insert button at the end of the container
+        // コンテナの末尾に挿入
         menuContainer.appendChild(autobotButton);
 
         setTimeout(() => handleButtonVisibility(), 100);
 
-        console.log('AutoBot button added to menu');
+        console.log('AutoBot ボタンをメニューに追加しました');
     }
 
-    // Setup modal observers
+    // モーダル監視のセットアップ
     function setupModalObservers() {
         const modalAttributeObserver = new MutationObserver((mutations) => {
             mutations.forEach((mutation) => {
@@ -230,151 +230,4 @@ if (window.location.hostname === 'wplace.live') {
                             nestedModals.forEach((modal) => {
                                 modalAttributeObserver.observe(modal, {
                                     attributes: true,
-                                    attributeFilter: ['open']
-                                });
-                            });
-
-                            if (nestedModals.length > 0) {
-                                handleButtonVisibility();
-                            }
-                        }
-                    });
-
-                    if (mutation.removedNodes.length > 0) {
-                        handleButtonVisibility();
-                    }
-                }
-            });
-        });
-
-        const existingModals = document.querySelectorAll('dialog.modal, dialog');
-        existingModals.forEach((modal) => {
-            modalAttributeObserver.observe(modal, {
-                attributes: true,
-                attributeFilter: ['open']
-            });
-        });
-
-        domObserver.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-    }
-
-    // Observer to recreate button if removed
-    const buttonObserver = new MutationObserver((mutations) => {
-        if (!buttonRemoved) {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'childList') {
-                    if (!document.getElementById('wplace-autobot-btn')) {
-                        setTimeout(createAutoButton, 500);
-                    }
-                }
-            });
-        }
-    });
-
-    window.addEventListener("message", (event) => {
-        if (event.source !== window) return;
-        if (event.data.source !== "my-userscript") return;
-        const message = event.data;
-        if (message.type === "setCookie" && message.value) {
-            console.log("🍪 Content script received setCookie message:", message);
-            chrome.runtime.sendMessage(
-                { type: "setCookie", value: message.value },
-                (response) => {
-                    console.log("📥 Content script received response from background:", response);
-                    // Send response back to userscript
-                    window.postMessage({
-                        type: "setCookieResponse",
-                        status: response ? response.status || 'ok' : 'error',
-                        originalMessage: message
-                    }, "*");
-                    
-                    if (response && response.status === "ok") {
-                        console.log("✅ Forwarded token to background.");
-                    }
-                }
-            );
-        }
-    });
-
-    window.addEventListener("message", (event) => {
-        if (event.source !== window) return;
-        const msg = event.data;
-        if (msg && msg.source === "my-userscript") {
-            if (msg.type === "getAccounts") {
-                chrome.runtime.sendMessage({ type: "getAccounts" }, (response) => {
-                    if (response && response.accounts) {
-                        window.postMessage(
-                            {
-                                source: "extension",
-                                type: "accountsData",
-                                accounts: response.accounts,
-                            },
-                            "*"
-                        );
-                    }
-                });
-            }
-        }
-    });
-
-    chrome.runtime.onMessage.addListener((msg) => {
-        if (msg.type === "cookieSet") {
-            window.postMessage(
-                {
-                    source: "my-extension",
-                    type: "cookieSet",
-                    value: msg.value,
-                },
-                "*"
-            );
-        }
-    });
-
-    window.addEventListener("message", (event) => {
-        if (event.source !== window) return;
-        const msg = event.data;
-        if (msg?.type === "deleteAccount" && typeof msg.index === "number") {
-            chrome.runtime.sendMessage(
-                { type: "deleteAccount", index: msg.index },
-                (response) => {
-                    window.postMessage(
-                        {
-                            type: "deleteAccountResult",
-                            index: msg.index,
-                            status: response?.status || "error",
-                        },
-                        "*"
-                    );
-                }
-            );
-        }
-    });
-
-    // Initialization
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            createAutoButton();
-            setupModalObservers();
-        });
-    } else {
-        createAutoButton();
-        setupModalObservers();
-    }
-
-    setTimeout(() => {
-        createAutoButton();
-        setupModalObservers();
-    }, 2000);
-
-    buttonObserver.observe(document.body, {
-        childList: true,
-        subtree: true
-    });
-
-    console.log('WPlace AutoBOT content script loaded');
-}
-
-
+{
